@@ -13,7 +13,6 @@ export default function Navigation() {
 
   // Show different navigation based on route
   const isLanding = location === "/";
-  const isDashboard = location === "/creator" || location === "/agent";
 
   return (
     <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -42,25 +41,26 @@ export default function Navigation() {
               </>
             )}
             
-            {isDashboard && (
-              <>
-                <Link href="/creator">
-                  <Button
-                    variant={location === "/creator" ? "default" : "ghost"}
-                    data-testid="link-creator"
-                  >
-                    Creator Dashboard
-                  </Button>
-                </Link>
-                <Link href="/agent">
-                  <Button
-                    variant={location === "/agent" ? "default" : "ghost"}
-                    data-testid="link-agent"
-                  >
-                    Agent Console
-                  </Button>
-                </Link>
-              </>
+            {location === "/creator" && (
+              <Link href="/creator">
+                <Button
+                  variant="default"
+                  data-testid="link-creator"
+                >
+                  Creator Dashboard
+                </Button>
+              </Link>
+            )}
+            
+            {location === "/agent" && (
+              <Link href="/agent">
+                <Button
+                  variant="default"
+                  data-testid="link-agent"
+                >
+                  Agent Console
+                </Button>
+              </Link>
             )}
           </nav>
         </div>

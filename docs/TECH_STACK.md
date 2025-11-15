@@ -102,15 +102,6 @@ iGuard is built entirely on the Replit platform, leveraging several key Replit t
   - Multi-signature approvals for teams
   - Automatic top-ups
 
-### Stripe Connect
-- **What it is**: Payments platform for marketplaces
-- **How we'll use it**: Creator payouts in fiat currency
-- **Features**:
-  - Convert USDC earnings to USD
-  - Bank account transfers
-  - Tax documentation (1099s)
-  - International payouts
-
 ## Development Tools
 
 ### Type Safety

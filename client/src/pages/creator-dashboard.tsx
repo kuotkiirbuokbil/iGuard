@@ -18,47 +18,47 @@ export default function CreatorDashboard() {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
   const [isRedirecting, setIsRedirecting] = useState(false);
 
-  // Handle redirects based on auth state
-  useEffect(() => {
-    if (authLoading) return; // Wait for auth to load
-    
-    if (!isAuthenticated) {
-      setIsRedirecting(true);
-      setLocation("/login");
-      return;
-    }
-    
-    if (!user) return; // Should not happen if isAuthenticated, but be safe
-    
-    if (!user.creatorId && !user.agentId) {
-      setIsRedirecting(true);
-      setLocation("/account-setup");
-      return;
-    }
-    
-    if (user.agentId && !user.creatorId) {
-      setIsRedirecting(true);
-      setLocation("/agent");
-      return;
-    }
-  }, [authLoading, isAuthenticated, user, setLocation]);
+  // TEMPORARILY DISABLED - auth redirects disabled for development
+  // useEffect(() => {
+  //   if (authLoading) return; // Wait for auth to load
+  //   
+  //   if (!isAuthenticated) {
+  //     setIsRedirecting(true);
+  //     setLocation("/login");
+  //     return;
+  //   }
+  //   
+  //   if (!user) return; // Should not happen if isAuthenticated, but be safe
+  //   
+  //   if (!user.creatorId && !user.agentId) {
+  //     setIsRedirecting(true);
+  //     setLocation("/account-setup");
+  //     return;
+  //   }
+  //   
+  //   if (user.agentId && !user.creatorId) {
+  //     setIsRedirecting(true);
+  //     setLocation("/agent");
+  //     return;
+  //   }
+  // }, [authLoading, isAuthenticated, user, setLocation]);
 
-  // Fetch creator profile
+  // Fetch creator profile - TEMPORARILY DISABLED auth requirement
   const { data: creator } = useQuery<Creator>({
     queryKey: ['/api/creator/me'],
-    enabled: !!user?.creatorId
+    enabled: true // Always enabled for now
   });
 
-  // Fetch data sources
+  // Fetch data sources - TEMPORARILY DISABLED auth requirement
   const { data: dataSources = [], isLoading: loadingDataSources } = useQuery({
     queryKey: ['/api/creator/me/data-sources'],
-    enabled: !!user?.creatorId
+    enabled: true // Always enabled for now
   });
 
-  // Fetch access logs
+  // Fetch access logs - TEMPORARILY DISABLED auth requirement
   const { data: accessLogs = [], isLoading: loadingLogs } = useQuery({
     queryKey: ['/api/creator/me/access-logs'],
-    enabled: !!user?.creatorId
+    enabled: true // Always enabled for now
   });
 
   // Create data source mutation
@@ -94,20 +94,8 @@ export default function CreatorDashboard() {
     .reduce((sum, log) => sum + parseFloat(log.amount || '0'), 0)
     .toFixed(2);
 
-  // Show loading only while auth is being checked or redirecting
-  if (authLoading || isRedirecting) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-muted-foreground">{isRedirecting ? 'Redirecting...' : 'Loading...'}</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Safeguard: If somehow we get here without a creator profile, show loading
-  // (the redirect effect should have already triggered)
-  if (!user?.creatorId) {
+  // TEMPORARILY DISABLED - show loading only while auth is being checked
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">

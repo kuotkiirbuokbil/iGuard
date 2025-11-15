@@ -1,12 +1,62 @@
-import { Link } from "wouter";
+import { useState } from "react";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Shield } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Login() {
-  const handleLogin = () => {
-    // Redirect to Replit Auth login endpoint
-    window.location.href = "/api/login";
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        toast({
+          title: "Success",
+          description: "Logged in successfully",
+        });
+
+        // Redirect based on account type
+        if (data.user?.accountType === 'creator') {
+          setLocation("/creator");
+        } else if (data.user?.accountType === 'agent') {
+          setLocation("/agent");
+        } else {
+          setLocation("/account-setup");
+        }
+      } else {
+        const error = await response.json();
+        toast({
+          title: "Login failed",
+          description: error.message || "Invalid email or password",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "An error occurred. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -29,27 +79,47 @@ export default function Login() {
           <CardHeader>
             <CardTitle>Log In</CardTitle>
             <CardDescription>
-              Sign in with your Replit account or email
+              Sign in with your email and password
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              You'll be redirected to Replit's secure authentication page where you can:
-            </p>
-            <ul className="text-sm text-muted-foreground space-y-2 list-disc list-inside">
-              <li>Sign in with Google</li>
-              <li>Sign in with GitHub</li>
-              <li>Sign in with email and password</li>
-            </ul>
+          <CardContent>
+            <form onSubmit={handleEmailLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  disabled={isLoading}
+                />
+              </div>
+              <Button
+                type="submit"
+                className="w-full"
+                data-testid="button-login"
+                disabled={isLoading}
+              >
+                {isLoading ? "Logging in..." : "Log In"}
+              </Button>
+            </form>
+
           </CardContent>
           <CardFooter className="flex flex-col gap-4">
-            <Button
-              onClick={handleLogin}
-              className="w-full"
-              data-testid="button-login"
-            >
-              Continue to Login
-            </Button>
             <div className="text-sm text-center text-muted-foreground">
               Don't have an account?{" "}
               <Link href="/signup">

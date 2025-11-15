@@ -16,41 +16,41 @@ export default function AgentConsole() {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
   const [isRedirecting, setIsRedirecting] = useState(false);
 
-  // Handle redirects based on auth state
-  useEffect(() => {
-    if (authLoading) return; // Wait for auth to load
-    
-    if (!isAuthenticated) {
-      setIsRedirecting(true);
-      setLocation("/login");
-      return;
-    }
-    
-    if (!user) return; // Should not happen if isAuthenticated, but be safe
-    
-    if (!user.creatorId && !user.agentId) {
-      setIsRedirecting(true);
-      setLocation("/account-setup");
-      return;
-    }
-    
-    if (user.creatorId && !user.agentId) {
-      setIsRedirecting(true);
-      setLocation("/creator");
-      return;
-    }
-  }, [authLoading, isAuthenticated, user, setLocation]);
+  // TEMPORARILY DISABLED - auth redirects disabled for development
+  // useEffect(() => {
+  //   if (authLoading) return; // Wait for auth to load
+  //   
+  //   if (!isAuthenticated) {
+  //     setIsRedirecting(true);
+  //     setLocation("/login");
+  //     return;
+  //   }
+  //   
+  //   if (!user) return; // Should not happen if isAuthenticated, but be safe
+  //   
+  //   if (!user.creatorId && !user.agentId) {
+  //     setIsRedirecting(true);
+  //     setLocation("/account-setup");
+  //     return;
+  //   }
+  //   
+  //   if (user.creatorId && !user.agentId) {
+  //     setIsRedirecting(true);
+  //     setLocation("/creator");
+  //     return;
+  //   }
+  // }, [authLoading, isAuthenticated, user, setLocation]);
 
-  // Fetch agent profile
+  // Fetch agent profile - TEMPORARILY DISABLED auth requirement
   const { data: agent, isLoading: loadingAgent } = useQuery<Agent>({
     queryKey: ['/api/agent/me'],
-    enabled: !!user?.agentId
+    enabled: true // Always enabled for now
   });
 
-  // Fetch access logs
+  // Fetch access logs - TEMPORARILY DISABLED auth requirement
   const { data: accessLogs = [], isLoading: loadingLogs } = useQuery({
     queryKey: ['/api/agent/me/access-logs'],
-    enabled: !!user?.agentId
+    enabled: true // Always enabled for now
   });
 
   // Generate API key mutation
@@ -87,20 +87,8 @@ export default function AgentConsole() {
     });
   };
 
-  // Show loading only while auth is being checked or redirecting
-  if (authLoading || isRedirecting) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-muted-foreground">{isRedirecting ? 'Redirecting...' : 'Loading...'}</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Safeguard: If somehow we get here without an agent profile, show loading
-  // (the redirect effect should have already triggered)
-  if (!user?.agentId) {
+  // TEMPORARILY DISABLED - show loading only while auth is being checked
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -111,7 +99,7 @@ export default function AgentConsole() {
   }
   
   // Show loading while agent data is being fetched
-  if (loadingAgent || !agent) {
+  if (loadingAgent) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
@@ -120,6 +108,17 @@ export default function AgentConsole() {
       </div>
     );
   }
+  
+  // Use mock agent if not available
+  const displayAgent = agent || {
+    id: 'dev-agent-123',
+    userId: 'dev-user-123',
+    name: 'Dev Agent',
+    apiKey: null,
+    locusWalletId: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -132,9 +131,9 @@ export default function AgentConsole() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <AgentDetailsCard
-              agentId={agent?.id}
-              agentName={agent?.name}
-              apiKey={agent?.apiKey || undefined}
+              agentId={displayAgent.id}
+              agentName={displayAgent.name}
+              apiKey={displayAgent.apiKey || undefined}
               onGenerateKey={handleGenerateKey}
             />
             <TestGatewayCard onTest={handleTestGateway} />

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,8 +13,23 @@ import { useAuth } from "@/hooks/useAuth";
 export default function AccountSetup() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
-  const { user } = useAuth();
+  const { user, isLoading: authLoading } = useAuth();
   const [accountType, setAccountType] = useState<"creator" | "agent">("creator");
+
+  // TEMPORARILY DISABLED - redirect if user already has a profile
+  useEffect(() => {
+    if (authLoading) return;
+    
+    if (user?.creatorId) {
+      setLocation("/creator");
+      return;
+    }
+    
+    if (user?.agentId) {
+      setLocation("/agent");
+      return;
+    }
+  }, [user, authLoading, setLocation]);
 
   const setupMutation = useMutation({
     mutationFn: async () => {
@@ -32,13 +47,24 @@ export default function AccountSetup() {
       
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
         title: "Account setup complete",
         description: `Your ${accountType} account is ready!`,
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/auth/user'] });
-      setLocation(accountType === "creator" ? "/creator" : "/agent");
+      // Update user data in cache with the new profile ID
+      queryClient.setQueryData(['/api/auth/user'], (oldUser: any) => {
+        if (!oldUser) return oldUser;
+        return {
+          ...oldUser,
+          creatorId: accountType === 'creator' ? data.profileId : oldUser.creatorId,
+          agentId: accountType === 'agent' ? data.profileId : oldUser.agentId,
+        };
+      });
+      // Small delay to ensure state updates before redirect
+      setTimeout(() => {
+        setLocation(accountType === "creator" ? "/creator" : "/agent");
+      }, 100);
     },
     onError: (error: Error) => {
       toast({
@@ -53,6 +79,17 @@ export default function AccountSetup() {
     e.preventDefault();
     setupMutation.mutate();
   };
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
