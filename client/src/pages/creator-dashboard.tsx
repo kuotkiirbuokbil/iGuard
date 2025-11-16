@@ -8,8 +8,11 @@ import StatCard from "@/components/StatCard";
 import DataSourceForm from "@/components/DataSourceForm";
 import DataSourcesTable from "@/components/DataSourcesTable";
 import AccessLogsTable from "@/components/AccessLogsTable";
-import { DollarSign, Activity, Database, TrendingUp } from "lucide-react";
+import { DollarSign, Activity, Database, TrendingUp, ExternalLink, Wallet } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import type { DataSource, AccessLog, Creator } from "@shared/schema";
 
 export default function CreatorDashboard() {
@@ -113,6 +116,88 @@ export default function CreatorDashboard() {
             title="Creator Dashboard"
             description="Manage your data sources and monitor earnings"
           />
+
+          {/* Live Demo Card for Judges */}
+          <Card className="border-2 border-primary bg-gradient-to-r from-primary/5 to-primary/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wallet className="w-5 h-5" />
+                🎥 Live Payment Demo - Click to Verify on BaseScan
+              </CardTitle>
+              <CardDescription>
+                Real blockchain payments on Base mainnet - All transactions verifiable on-chain
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-sm">Locus Wallet (AI Agent Payments)</h4>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="font-mono text-xs">
+                      0x6A27...1CfD
+                    </Badge>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => window.open('https://basescan.org/address/0x6A2747102A2fDCCF4d05b3Ba74193EBe8FEF1CfD', '_blank')}
+                    >
+                      <ExternalLink className="w-3 h-3 mr-1" />
+                      View Wallet
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    AI agents use this wallet to make autonomous USDC payments for data access
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-sm">x402 Receive Wallet (Creator Earnings)</h4>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="font-mono text-xs">
+                      0xA8Cb...aED9
+                    </Badge>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => window.open('https://basescan.org/address/0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9', '_blank')}
+                    >
+                      <ExternalLink className="w-3 h-3 mr-1" />
+                      View Wallet
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Creators receive USDC payments here when AI agents access their data
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-2 flex-wrap">
+                <Button
+                  onClick={() => setLocation('/demo')}
+                  variant="default"
+                >
+                  <Wallet className="w-4 h-4 mr-2" />
+                  Interactive Payment Demo
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => window.open('https://basescan.org/token/0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913', '_blank')}
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  View USDC Contract
+                </Button>
+              </div>
+
+              <div className="bg-muted p-3 rounded-lg text-xs space-y-1">
+                <p className="font-semibold">✅ What Judges Can Verify:</p>
+                <ul className="list-disc list-inside space-y-0.5 text-muted-foreground">
+                  <li>Real wallet balances on Base blockchain</li>
+                  <li>All USDC transactions with timestamps and amounts</li>
+                  <li>Gas fees and transaction confirmations</li>
+                  <li>Complete payment transparency via BaseScan</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatCard

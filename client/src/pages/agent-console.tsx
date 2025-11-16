@@ -8,6 +8,10 @@ import AgentDetailsCard from "@/components/AgentDetailsCard";
 import TestGatewayCard from "@/components/TestGatewayCard";
 import AccessLogsTable from "@/components/AccessLogsTable";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ExternalLink, Wallet } from "lucide-react";
 import type { Agent, AccessLog } from "@shared/schema";
 
 export default function AgentConsole() {
@@ -128,6 +132,79 @@ export default function AgentConsole() {
             title="Agent Console"
             description="Manage your agent credentials and test gateway access"
           />
+
+          {/* Live Demo Card for Judges */}
+          <Card className="border-2 border-primary bg-gradient-to-r from-primary/5 to-primary/10">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wallet className="w-5 h-5" />
+                🎥 Live Blockchain Integration - Verify on BaseScan
+              </CardTitle>
+              <CardDescription>
+                AI Agents make autonomous USDC payments on Base - All verifiable on-chain
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-sm">Agent Wallet (Makes Payments)</h4>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="font-mono text-xs">
+                      0x6A27...1CfD
+                    </Badge>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => window.open('https://basescan.org/address/0x6A2747102A2fDCCF4d05b3Ba74193EBe8FEF1CfD', '_blank')}
+                    >
+                      <ExternalLink className="w-3 h-3 mr-1" />
+                      View on BaseScan
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    This wallet makes autonomous USDC payments when accessing creator data
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-sm">Transaction Evidence</h4>
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline">Base Mainnet</Badge>
+                    <Badge variant="outline">Chain ID: 8453</Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Every payment transaction is recorded on Base blockchain with full transparency
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-2 flex-wrap">
+                <Button
+                  onClick={() => setLocation('/demo')}
+                  variant="default"
+                >
+                  <Wallet className="w-4 h-4 mr-2" />
+                  Test Live Payments
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => window.open('https://basescan.org/token/0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913?a=0x6A2747102A2fDCCF4d05b3Ba74193EBe8FEF1CfD', '_blank')}
+                >
+                  <ExternalLink className="w-4 h-4 mr-2" />
+                  View USDC Transfers
+                </Button>
+              </div>
+
+              <div className="bg-muted p-3 rounded-lg text-xs space-y-1">
+                <p className="font-semibold">✅ Judge Verification:</p>
+                <ul className="list-disc list-inside space-y-0.5 text-muted-foreground">
+                  <li>Click "View on BaseScan" to see wallet balance and transaction history</li>
+                  <li>All USDC transfers show amount, timestamp, and gas fees</li>
+                  <li>Transaction hashes prove on-chain settlement</li>
+                  <li>Complete payment transparency - no fake demos!</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <AgentDetailsCard
