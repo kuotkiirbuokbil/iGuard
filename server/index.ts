@@ -1,6 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { setupX402, DEFAULT_PRICING } from "./x402";
 
 const app = express();
 
@@ -15,6 +16,20 @@ app.use(express.json({
   }
 }));
 app.use(express.urlencoded({ extended: false }));
+
+// Setup x402 payment middleware (optional - controlled by environment variable)
+if (process.env.X402_ENABLED === 'true' && process.env.X402_WALLET_ADDRESS) {
+  try {
+    setupX402(app, {
+      walletAddress: process.env.X402_WALLET_ADDRESS,
+      network: process.env.X402_NETWORK || "base-sepolia",
+      defaultPrice: process.env.X402_DEFAULT_PRICE || "$0.01",
+      endpoints: DEFAULT_PRICING
+    });
+  } catch (error) {
+    log(`[x402] Failed to setup payment middleware: ${error}`);
+  }
+}
 
 app.use((req, res, next) => {
   const start = Date.now();
