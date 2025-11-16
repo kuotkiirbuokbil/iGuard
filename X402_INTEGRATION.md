@@ -72,12 +72,12 @@ X402_NETWORK=base-sepolia
 # Default price for unspecified endpoints
 X402_DEFAULT_PRICE=$0.01
 
-# Optional: Coinbase Developer Platform credentials
-# CDP_API_KEY_ID=your_api_key_id
-# CDP_API_KEY_SECRET=your_api_key_secret
+# Optional: Coinbase Developer Platform credentials - ✅ CONFIGURED
+CDP_API_KEY_ID=97c896f6-7891-4f90-b808-082a9ec8466c
+CDP_API_KEY_SECRET=tfPvRPJtM9G2FN9sLqa8iKhd9iYNjU3D0H8s+pqU2F3BEuFK67L0b7mchSWG4GNrZkqjklhrnUoaoecBxHvnQQ==
 ```
 
-**Note:** Your wallet address is already configured. Simply change `X402_ENABLED=false` to `X402_ENABLED=true` to start accepting payments.
+**Note:** Your wallet address and CDP credentials are already configured. Simply change `X402_ENABLED=false` to `X402_ENABLED=true` to start accepting payments.
 
 ### Your Wallet Address
 
