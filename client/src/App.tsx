@@ -10,6 +10,7 @@ import Signup from "@/pages/signup";
 import AccountSetup from "@/pages/account-setup";
 import CreatorDashboard from "@/pages/creator-dashboard";
 import AgentConsole from "@/pages/agent-console";
+import PaymentDemo from "@/pages/PaymentDemo";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/account-setup" component={AccountSetup} />
       <Route path="/creator" component={CreatorDashboard} />
       <Route path="/agent" component={AgentConsole} />
+      <Route path="/demo" component={PaymentDemo} />
       <Route component={NotFound} />
     </Switch>
   );
