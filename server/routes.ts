@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { insertDataSourceSchema, insertAccessLogSchema } from "@shared/schema";
 import { randomBytes } from "crypto";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { getLocusWallet } from "./locus";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Set up Replit Auth
@@ -606,9 +607,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validation = insertAccessLogSchema.safeParse(req.body);
 
       if (!validation.success) {
-        return res.status(400).json({ 
-          error: "Validation failed", 
-          details: validation.error.issues 
+        return res.status(400).json({
+          error: "Validation failed",
+          details: validation.error.issues
         });
       }
 
@@ -617,6 +618,120 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating access log:", error);
       res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  // Locus Wallet Routes
+
+  // Get Locus wallet info
+  app.get("/api/locus/wallet", async (req, res) => {
+    try {
+      const wallet = getLocusWallet();
+      const info = await wallet.getWalletInfo();
+      const ethBalance = await wallet.getBalance();
+      const usdcBalance = await wallet.getUSDCBalance();
+
+      res.json({
+        ...info,
+        balances: {
+          ETH: ethBalance,
+          USDC: usdcBalance
+        },
+        explorerUrl: `https://basescan.org/address/${info.address}`
+      });
+    } catch (error: any) {
+      console.error("Error fetching Locus wallet info:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get wallet balance
+  app.get("/api/locus/balance", async (req, res) => {
+    try {
+      const wallet = getLocusWallet();
+      const ethBalance = await wallet.getBalance();
+      const usdcBalance = await wallet.getUSDCBalance();
+
+      res.json({
+        ETH: ethBalance,
+        USDC: usdcBalance
+      });
+    } catch (error: any) {
+      console.error("Error fetching balance:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Transfer ETH
+  app.post("/api/locus/transfer/eth", async (req, res) => {
+    try {
+      const { to, amount } = req.body;
+
+      if (!to || !amount) {
+        return res.status(400).json({ error: "Missing required fields: to, amount" });
+      }
+
+      const wallet = getLocusWallet();
+      const result = await wallet.transferETH({ to, amount });
+
+      res.json(result);
+    } catch (error: any) {
+      console.error("Error transferring ETH:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Transfer USDC
+  app.post("/api/locus/transfer/usdc", async (req, res) => {
+    try {
+      const { to, amount } = req.body;
+
+      if (!to || !amount) {
+        return res.status(400).json({ error: "Missing required fields: to, amount" });
+      }
+
+      const wallet = getLocusWallet();
+      const result = await wallet.transferUSDC({ to, amount });
+
+      res.json(result);
+    } catch (error: any) {
+      console.error("Error transferring USDC:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Transfer any ERC20 token
+  app.post("/api/locus/transfer/token", async (req, res) => {
+    try {
+      const { tokenAddress, to, amount } = req.body;
+
+      if (!tokenAddress || !to || !amount) {
+        return res.status(400).json({
+          error: "Missing required fields: tokenAddress, to, amount"
+        });
+      }
+
+      const wallet = getLocusWallet();
+      const result = await wallet.transferToken(tokenAddress, { to, amount });
+
+      res.json(result);
+    } catch (error: any) {
+      console.error("Error transferring token:", error);
+      res.status(500).json({ error: error.message });
+    }
+  });
+
+  // Get transaction details
+  app.get("/api/locus/transaction/:txHash", async (req, res) => {
+    try {
+      const { txHash } = req.params;
+      const wallet = getLocusWallet();
+      const txDetails = await wallet.getTransaction(txHash);
+
+      res.json(txDetails);
+    } catch (error: any) {
+      console.error("Error fetching transaction:", error);
+      res.status(500).json({ error: error.message });
     }
   });
 
