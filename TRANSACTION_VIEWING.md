@@ -2,6 +2,10 @@
 
 This guide explains how to view and track x402 payment transactions in your iGuard application.
 
+> **Status:** ✅ Fully Integrated and Committed (b7c68ac)
+> **Your Wallet:** `0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9`
+> **View on BaseScan:** [Sepolia](https://sepolia.basescan.org/address/0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9) | [Mainnet](https://basescan.org/address/0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9)
+
 ## Quick Start
 
 Every successful x402 payment generates a transaction on the blockchain that can be viewed on BaseScan.
@@ -26,11 +30,15 @@ When x402 is enabled and a payment is received, the server automatically logs:
 On startup, you'll also see:
 
 ```bash
-[x402] Payment middleware enabled for wallet: 0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
+[x402] Payment middleware enabled for wallet: 0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9
 [x402] Network: base-sepolia
-[x402] View wallet: https://sepolia.basescan.org/address/0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
+[x402] View wallet: https://sepolia.basescan.org/address/0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9
 [x402] Protected endpoints: [ ... ]
 ```
+
+**Your Wallet Links (Ready to Use):**
+- **Testnet:** https://sepolia.basescan.org/address/0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9
+- **Mainnet:** https://basescan.org/address/0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9
 
 ## API Response Format
 
@@ -430,3 +438,32 @@ Every x402 payment transaction is:
 5. **Viewable** on BaseScan block explorer
 
 This provides complete transparency and auditability for all payments in your system.
+
+---
+
+## Quick Start
+
+**Your wallet is already configured!** To start receiving payments:
+
+1. **Get test USDC:**
+   - Visit [Circle Faucet](https://faucet.circle.com/)
+   - Request test USDC on Base Sepolia
+   - Send to: `0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9`
+
+2. **Enable x402:**
+   ```bash
+   # In .env file
+   X402_ENABLED=true
+   ```
+
+3. **Restart server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Watch for payments:**
+   All transactions will be logged with clickable BaseScan links!
+
+**View Your Wallet:**
+- **Testnet Transactions:** https://sepolia.basescan.org/address/0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9
+- **Mainnet Transactions:** https://basescan.org/address/0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9

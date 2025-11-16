@@ -2,6 +2,11 @@
 
 This document describes how the Coinbase x402 payment protocol has been integrated into the iGuard application.
 
+> **Status:** ✅ Fully Integrated (Commit: b7c68ac)
+> **Wallet:** `0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9`
+> **Network:** Base Sepolia (testnet) / Base (mainnet)
+> **View Wallet:** [BaseScan Sepolia](https://sepolia.basescan.org/address/0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9)
+
 ## What is x402?
 
 x402 is a payment protocol that enables instant USDC payments directly over HTTP. It allows APIs, apps, and AI agents to transact seamlessly by embedding payments into HTTP requests using the `402 Payment Required` status code.
@@ -52,14 +57,14 @@ X-PAYMENT: {payment_payload}
 
 ### Environment Variables
 
-Add these to your `.env` file:
+These are already configured in your `.env` file (not committed to git for security):
 
 ```bash
-# Enable/disable x402 payments
-X402_ENABLED=true
+# Enable/disable x402 payments (currently disabled for safety)
+X402_ENABLED=false
 
-# Your wallet address (Base network)
-X402_WALLET_ADDRESS=0xYourWalletAddressHere
+# Your wallet address (Base network) - ✅ CONFIGURED
+X402_WALLET_ADDRESS=0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9
 
 # Network: "base" (mainnet) or "base-sepolia" (testnet)
 X402_NETWORK=base-sepolia
@@ -68,28 +73,21 @@ X402_NETWORK=base-sepolia
 X402_DEFAULT_PRICE=$0.01
 
 # Optional: Coinbase Developer Platform credentials
-CDP_API_KEY_ID=your_api_key_id
-CDP_API_KEY_SECRET=your_api_key_secret
+# CDP_API_KEY_ID=your_api_key_id
+# CDP_API_KEY_SECRET=your_api_key_secret
 ```
 
-### Getting a Wallet Address
+**Note:** Your wallet address is already configured. Simply change `X402_ENABLED=false` to `X402_ENABLED=true` to start accepting payments.
 
-1. **Option 1: Coinbase Wallet**
-   - Download Coinbase Wallet app
-   - Create a new wallet
-   - Copy your Ethereum address
-   - Ensure it's configured for Base network
+### Your Wallet Address
 
-2. **Option 2: MetaMask**
-   - Install MetaMask browser extension
-   - Create/import a wallet
-   - Add Base network to MetaMask
-   - Copy your wallet address
+✅ **Already Configured:** `0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9`
 
-3. **Option 3: Coinbase Developer Platform**
-   - Sign up at [Coinbase Developer Platform](https://portal.cdp.coinbase.com/)
-   - Create a new wallet in the dashboard
-   - Get API credentials for facilitator service
+**View Your Wallet:**
+- **Testnet (Base Sepolia):** https://sepolia.basescan.org/address/0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9
+- **Mainnet (Base):** https://basescan.org/address/0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9
+
+This wallet will receive all USDC payments from x402 transactions.
 
 ### Network Configuration
 
@@ -152,12 +150,12 @@ setupX402(app, {
 
 ### 1. Enable x402 in Development
 
-Update `.env`:
+Your wallet is already configured. Simply update `.env`:
 
 ```bash
 X402_ENABLED=true
-X402_WALLET_ADDRESS=0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb
-X402_NETWORK=base-sepolia
+# Wallet already set: 0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9
+# Network already set: base-sepolia
 ```
 
 ### 2. Start the Server
@@ -168,8 +166,9 @@ npm run dev
 
 You should see:
 ```
-[x402] Payment middleware enabled for wallet: 0x742d...
+[x402] Payment middleware enabled for wallet: 0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9
 [x402] Network: base-sepolia
+[x402] View wallet: https://sepolia.basescan.org/address/0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9
 [x402] Protected endpoints: [...]
 ```
 
@@ -462,14 +461,17 @@ x402 adds minimal latency:
 
 ### Checklist
 
-- [ ] Set `X402_ENABLED=true`
-- [ ] Update `X402_WALLET_ADDRESS` with production wallet
-- [ ] Set `X402_NETWORK=base` (mainnet)
-- [ ] Configure CDP API credentials
-- [ ] Test payment flow on testnet first
+- [x] ~~Update `X402_WALLET_ADDRESS` with production wallet~~ ✅ Already configured: `0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9`
+- [x] ~~Install x402 packages~~ ✅ Installed and committed
+- [x] ~~Create payment middleware~~ ✅ Created at `server/x402.ts`
+- [x] ~~Add transaction viewing~~ ✅ Full BaseScan integration
+- [x] ~~Create React components~~ ✅ TransactionLink components ready
+- [ ] **Get test USDC on Base Sepolia** - [Circle Faucet](https://faucet.circle.com/)
+- [ ] **Test payment flow on testnet** - Set `X402_ENABLED=true` in `.env`
+- [ ] Set `X402_NETWORK=base` for mainnet (when ready)
+- [ ] Configure CDP API credentials (optional)
 - [ ] Monitor initial transactions closely
 - [ ] Set up payment analytics
-- [ ] Configure backup payment methods
 - [ ] Document pricing for API users
 
 ### Environment Variables
@@ -477,10 +479,10 @@ x402 adds minimal latency:
 ```bash
 # Production .env
 X402_ENABLED=true
-X402_WALLET_ADDRESS=0xYourProductionWallet
-X402_NETWORK=base
-CDP_API_KEY_ID=prod_key_id
-CDP_API_KEY_SECRET=prod_key_secret
+X402_WALLET_ADDRESS=0xA8Cb16414454D41707ACFB8B38a192DF83d8aED9  # ✅ Already configured
+X402_NETWORK=base  # Change to mainnet
+CDP_API_KEY_ID=prod_key_id  # Optional
+CDP_API_KEY_SECRET=prod_key_secret  # Optional
 ```
 
 ## Resources
